@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Distributed Systems: System Models :: Ellcrys</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="System model in Distributed System" />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/distributed-systems-network-models/" />
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="/img/favicon/orange.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="Sarkk_" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Distributed Systems: System Models">
+<meta property="og:description" content="System model in Distributed System" />
+<meta property="og:url" content="/posts/distributed-systems-network-models/" />
+<meta property="og:site_name" content="Ellcrys" />
+
+  <meta property="og:image" content="/">
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2022-02-10 11:53:08 &#43;0100 WAT" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="orange">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    Learn.xyz
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="/posts/distributed-systems-network-models/">Distributed Systems: System Models</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2022-02-10
+        
+      </span>
+    
+    
+      <span class="post-author">:: Solanke Abdulrahman</span>
+    
+    
+      <span class="post-reading-time">:: 3 min read (430 words)</span>
+    
+  </div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <h1 id="22-system-models">2.2 SYSTEM MODELS<a href="#22-system-models" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<ul>
+<li>Two generals problem: A model of networks.  We assume that nodes are honest, but messages can get lost.</li>
+<li>Byzantine generals problem: A model of node behaviour. We assume that messages get delivered, but nodes can be dishonest / manipulated.</li>
+</ul>
+<p>In real systems, both nodes and network might be faulty.</p>
+<p>We want to capture assumptions in a system model consisting of:</p>
+<ul>
+<li>Network behaviour (e.g message loss)</li>
+<li>Node behaviour (e.g Crashes)</li>
+<li>Timing behaviour (e.g latency)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ServiceExcption</span>(<span style="color:#a6e22e">Exception</span>):
+    <span style="color:#a6e22e">@staticmethod</span>
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">hello</span>(string):
+        print(string)
+</code></pre></div><h2 id="network-behaviour">Network Behaviour<a href="#network-behaviour" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Assume bidi point-to-point communication between two nodes. We can have:</p>
+<ol>
+<li><strong>Reliable</strong> (perfect) links: A message is received if and only if it is sent.</li>
+<li><strong>Fair-loss</strong> links: Messages may be lost, duplicated or reordered. If you keep retrying, a message eventually gets through.</li>
+<li><strong>Arbitrary</strong> (Active adversary) links: A malicious adversary may interfere with messages (eavesdrop, modify, drop, spoof, replay).</li>
+</ol>
+<p><strong>Network Partition</strong> is when a link between nodes is interrupted for a finite amount of time.</p>
+<p>Interesting thing with this model of network behaviour is that the links can be upgraded.</p>
+<ul>
+<li>Fair-loss link -&gt; Reliable link: Using Retry + Deduplication logic.</li>
+<li>Arbitrary link -&gt; Fair-loss link: Using TLS protocol. This can only be upgraded though, if the active adversary does not entirely stop the transmission of packets.</li>
+</ul>
+<h2 id="node-behaviour">Node Behaviour<a href="#node-behaviour" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Each node executes a specified algorithm, assuming one of the following:</p>
+<ol>
+<li><strong>Crash-stop</strong> (fail-stop): A node is faulty if it crashes (at any moment). After a crash, it stops executing forever.</li>
+<li><strong>Crash-recovery</strong> (fail-recovery): A node may crash at any moment, losing its in-memory state. It mar resume executing some other time.</li>
+<li><strong>Byzantine</strong> (fail-arbitrary): A node is faulty if it deviates from its algorithm. This could be crashing or  malicious behaviour.</li>
+</ol>
+<p>A node that is not faulty is called <strong>correct</strong>. An assumption here is that a node does not know if another node is faulty, that can be handled by <strong>Fault Detection</strong> mechanisms.</p>
+<h2 id="synchrony-timing-behaviour">Synchrony (Timing) Behaviour<a href="#synchrony-timing-behaviour" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Assume one of the following for network and nodes:</p>
+<ol>
+<li><strong>Synchronous</strong>: Message latency no greater than a known upper bound. Nodes execute algorithm at a known speed.</li>
+<li><strong>Partially Synchronous</strong>: The system is asynchronous for some finite (but unknown) periods of time, synchronous otherwise.</li>
+<li><strong>Asynchronous</strong>:  Messages can be delayed arbitrarily. Nodes can pause execution arbitrarily. No timing guarantees at all.</li>
+</ol>
+<p>Here are some violations of synchrony in practice:</p>
+<p><strong>Violations of predictable latency</strong>:</p>
+<ul>
+<li>Message loss requiring retry due to a network partition.</li>
+<li>Congestion/contention causing queueing.</li>
+<li>Network/route reconfiguration.</li>
+</ul>
+<p><strong>Violations of predictable code execution speed</strong>:</p>
+<ul>
+<li>OS scheduling issues e.g priority inversion.</li>
+<li>Stop-the-world GC pauses.</li>
+<li>Page faults, swap, thrashing.</li>
+</ul>
+<p><strong>RTOS</strong> provide scheduling guarantees, but most distributed systems do not use RTOS.</p>
+
+      </div></div>
+
+  
+  
+  
+
+  
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+    <div class="footer__inner">
+        
+        </div>
+        </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

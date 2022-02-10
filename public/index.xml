@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ellcrys</title>
+    <link>/</link>
+    <description>Recent content on Ellcrys</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 10 Feb 2022 11:53:08 +0100</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Distributed Systems: System Models</title>
+      <link>/posts/distributed-systems-network-models/</link>
+      <pubDate>Thu, 10 Feb 2022 11:53:08 +0100</pubDate>
+      
+      <guid>/posts/distributed-systems-network-models/</guid>
+      <description>System model in Distributed System</description>
+      <content>&lt;h1 id=&#34;22-system-models&#34;&gt;2.2 SYSTEM MODELS&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Two generals problem: A model of networks.  We assume that nodes are honest, but messages can get lost.&lt;/li&gt;
+&lt;li&gt;Byzantine generals problem: A model of node behaviour. We assume that messages get delivered, but nodes can be dishonest / manipulated.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In real systems, both nodes and network might be faulty.&lt;/p&gt;
+&lt;p&gt;We want to capture assumptions in a system model consisting of:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Network behaviour (e.g message loss)&lt;/li&gt;
+&lt;li&gt;Node behaviour (e.g Crashes)&lt;/li&gt;
+&lt;li&gt;Timing behaviour (e.g latency)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ServiceExcption&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;Exception&lt;/span&gt;):
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;@staticmethod&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;hello&lt;/span&gt;(string):
+        print(string)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;network-behaviour&#34;&gt;Network Behaviour&lt;/h2&gt;
+&lt;p&gt;Assume bidi point-to-point communication between two nodes. We can have:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Reliable&lt;/strong&gt; (perfect) links: A message is received if and only if it is sent.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Fair-loss&lt;/strong&gt; links: Messages may be lost, duplicated or reordered. If you keep retrying, a message eventually gets through.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Arbitrary&lt;/strong&gt; (Active adversary) links: A malicious adversary may interfere with messages (eavesdrop, modify, drop, spoof, replay).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;Network Partition&lt;/strong&gt; is when a link between nodes is interrupted for a finite amount of time.&lt;/p&gt;
+&lt;p&gt;Interesting thing with this model of network behaviour is that the links can be upgraded.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fair-loss link -&amp;gt; Reliable link: Using Retry + Deduplication logic.&lt;/li&gt;
+&lt;li&gt;Arbitrary link -&amp;gt; Fair-loss link: Using TLS protocol. This can only be upgraded though, if the active adversary does not entirely stop the transmission of packets.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;node-behaviour&#34;&gt;Node Behaviour&lt;/h2&gt;
+&lt;p&gt;Each node executes a specified algorithm, assuming one of the following:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Crash-stop&lt;/strong&gt; (fail-stop): A node is faulty if it crashes (at any moment). After a crash, it stops executing forever.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Crash-recovery&lt;/strong&gt; (fail-recovery): A node may crash at any moment, losing its in-memory state. It mar resume executing some other time.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Byzantine&lt;/strong&gt; (fail-arbitrary): A node is faulty if it deviates from its algorithm. This could be crashing or  malicious behaviour.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;A node that is not faulty is called &lt;strong&gt;correct&lt;/strong&gt;. An assumption here is that a node does not know if another node is faulty, that can be handled by &lt;strong&gt;Fault Detection&lt;/strong&gt; mechanisms.&lt;/p&gt;
+&lt;h2 id=&#34;synchrony-timing-behaviour&#34;&gt;Synchrony (Timing) Behaviour&lt;/h2&gt;
+&lt;p&gt;Assume one of the following for network and nodes:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Synchronous&lt;/strong&gt;: Message latency no greater than a known upper bound. Nodes execute algorithm at a known speed.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Partially Synchronous&lt;/strong&gt;: The system is asynchronous for some finite (but unknown) periods of time, synchronous otherwise.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Asynchronous&lt;/strong&gt;:  Messages can be delayed arbitrarily. Nodes can pause execution arbitrarily. No timing guarantees at all.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Here are some violations of synchrony in practice:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Violations of predictable latency&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Message loss requiring retry due to a network partition.&lt;/li&gt;
+&lt;li&gt;Congestion/contention causing queueing.&lt;/li&gt;
+&lt;li&gt;Network/route reconfiguration.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Violations of predictable code execution speed&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OS scheduling issues e.g priority inversion.&lt;/li&gt;
+&lt;li&gt;Stop-the-world GC pauses.&lt;/li&gt;
+&lt;li&gt;Page faults, swap, thrashing.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;RTOS&lt;/strong&gt; provide scheduling guarantees, but most distributed systems do not use RTOS.&lt;/p&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>About Me</title>
+      <link>/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>Heyy, I am Abdulrahman.
+I am a Software Engineer in Lagos, Nigeria. This blog is my virtual space where I document topics I am interested in.
+You could find me writing about Backend Engineering, Distributed sytems or Embedded Systems. I also play around with Python, Golang and Rust.
+If you want to talk about Software Engineering, Fantasy books, games or music, you can reach me via email or connect with me on twitter.</description>
+      <content>&lt;p&gt;Heyy, I am Abdulrahman.&lt;/p&gt;
+&lt;p&gt;I am a Software Engineer in Lagos, Nigeria. This blog is my virtual space
+where I document topics I am interested in.&lt;/p&gt;
+&lt;p&gt;You could find me writing about Backend Engineering, Distributed sytems or Embedded Systems.
+I also play around with Python, Golang and Rust.&lt;/p&gt;
+&lt;p&gt;If you want to talk about Software Engineering, Fantasy books, games or music, you can reach me via
+&lt;a href=&#34;mailto:solankerahman@gmail.com&#34;&gt;email&lt;/a&gt; or connect with me on &lt;a href=&#34;https://twitter.com/Sarkk_&#34;&gt;twitter&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Cheers&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/cover.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</content>
+    </item>
+    
+  </channel>
+</rss>
