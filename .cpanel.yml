@@ -2,5 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/sarksrxr/public_html/
-    - /bin/cp index.html $DEPLOYPATH
-    - /bin/cp -R public $DEPLOYPATH
+    - cp -R public/ $DEPLOYPATH
