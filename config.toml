@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "//www.sarkk.me"
 languageCode = "en-us"
 theme = "terminal"
 title = "Ellcrys"
