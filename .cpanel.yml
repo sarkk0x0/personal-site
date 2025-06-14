@@ -1,5 +1,0 @@
----
-deployment:
-  tasks:
-    - export DEPLOYPATH=/home/sarksrxr/public_html/
-    - rsync -a --delete public/ $DEPLOYPATH
